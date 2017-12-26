@@ -1,0 +1,5 @@
+#!/bin/bash
+set +e
+./buildGDCM.sh
+source ./downloads/emsdk-portable/emsdk_set_env.sh ; \
+em++ gdcmconv.cpp -Idownloads/GDCM/build/bin/ -Idownloads/GDCM/build/Source/Common/ -Idownloads/GDCM/Source/Common/ -Idownloads/GDCM/Source/DataStructureAndEncodingDefinition -Idownloads/GDCM/Source/MediaStorageAndFileFormat -Idownloads/GDCM/Source/InformationObjectDefinition -Idownloads/GDCM/Source/MessageExchangeDefinition -Idownloads/GDCM/Source/DataDictionary -Idownloads/GDCM/Utilities -Idownloads/GDCM/Utilities/socketxx -Idownloads/GDCM/Utilities/socketxx/socket++ -Idownloads/GDCM/Utilities/gdcmopenjpeg -Idownloads/GDCM/build/*.a -Idownloads/GDCM/build/.*bc -o gdcmconv.js -Oz -s FORCE_FILESYSTEM=1 -s NODEJS_CATCH_EXIT=0 -s EXPORTED_FUNCTIONS='["_gdcmconvexecutor"]' -s DISABLE_EXCEPTION_CATCHING=0 --post-js pos.js --pre-js pre.js --closure 1

@@ -8,8 +8,8 @@ else \
 	tar -xf emsdk-portable.tar.gz ; \
 	cd emsdk-portable ; \
 	./emsdk update ; \
-	./emsdk install latest ; \
-	./emsdk activate latest ; \
+	./emsdk install sdk-1.37.18-64bit ; \
+	./emsdk activate sdk-1.37.18-64bit ; \
 	./emsdk_env.sh ; \
 	echo "Downloaded\n\n" ; \
-fi;
+fi
