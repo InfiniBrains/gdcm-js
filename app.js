@@ -60,6 +60,18 @@ exports.gdcmdiff = function(memfs, args)
     });
 };
 
+exports.gdcmdump = function(memfs, args)
+{
+    if(requires.gdcmdump === undefined)
+        requires.gdcmdump = require('./gdcmdump.js');
+
+    return requires.gdcmdump({
+        MEMFS: memfs,
+        arguments: args,
+        stdin: function () {}
+    });
+};
+
 exports.gdcmgendir = function(memfs, args)
 {
     if(requires.gdcmgendir === undefined)

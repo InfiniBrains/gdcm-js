@@ -1,6 +1,6 @@
 {
   "name": "gdcm-js",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "GDCM from Malaterre ported to js",
   "main": "app.js",
   "scripts": {
