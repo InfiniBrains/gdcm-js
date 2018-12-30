@@ -1,4 +1,5 @@
-return __gdcmconv_return;
+
+  return returndata;
 }
 
-module["exports"] = __gdcmconv;
+module["exports"] = gdcmconvFunc;

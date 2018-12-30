@@ -1,0 +1,27 @@
+{
+  "name": "gdcm-conv",
+  "version": "1.0.0",
+  "description": "GDCM conv from Malaterre ported to js",
+  "main": "app.js",
+  "scripts": {
+    "test": "node tester.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/InfiniBrains/gdcm-js.git"
+  },
+  "keywords": [
+    "gdcm",
+    "malaterre",
+    "dicom",
+    "conv",
+    "gdcmconv",
+    "emscripten"
+  ],
+  "author": "Alexandre Tolstenko",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/InfiniBrains/gdcm-js/issues"
+  },
+  "homepage": "https://github.com/InfiniBrains/gdcm-js#readme"
+}
