@@ -2,4 +2,4 @@
   return returndata;
 }
 
-module["exports"] = gdcmconvFunc;
+module["exports"] = gdcmFunc;

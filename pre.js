@@ -12,7 +12,7 @@ function convertToUint8Array(data) {
     return data;
 }
 
-function gdcmconvFunc(params) {
+function gdcmFunc(params) {
     params = params || {};
     var returndata = {};
     var Module = {};

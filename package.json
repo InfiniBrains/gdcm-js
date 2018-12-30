@@ -1,7 +1,7 @@
 {
-  "name": "gdcm-conv",
-  "version": "1.0.0",
-  "description": "GDCM conv from Malaterre ported to js",
+  "name": "gdcm-js",
+  "version": "0.0.1",
+  "description": "GDCM from Malaterre ported to js",
   "main": "app.js",
   "scripts": {
     "test": "node tester.js"
