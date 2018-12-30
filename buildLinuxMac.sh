@@ -89,7 +89,7 @@ sleep 1
 cd emsdk
 ./emsdk update
 ./emsdk install latest
-./emsdk activate latestls
+./emsdk activate latest
 
 source ./emsdk_env.sh
 #./emsdk install mingw-7.1.0-64bit
