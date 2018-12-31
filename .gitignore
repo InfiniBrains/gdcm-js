@@ -3,3 +3,4 @@ downloads
 .idea/
 node_modules/
 downloads/
+gdcm.js*
