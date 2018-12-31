@@ -1,4 +1,7 @@
 # GDCM
+[![NPM](https://nodei.co/npm/gdcm-js.png?downloads=true)](https://www.npmjs.com/package/gdcm-js)
+
+
 This is the GDCM Library ported to JavaScript using Emscripten. 
 It is useful to convert DICOMs between formats inside browser, ionic, hybrid apps, node... 
 I personally created this to convert and decompress some exotic DICOM types.
