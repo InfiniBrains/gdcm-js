@@ -3,7 +3,6 @@
     <noscript>
         Sorry...JavaScript is needed to go ahead.
     </noscript>
-    <script src="../gdcmanon.js"></script>
     <script language = "javascript" type = "text/javascript">
         var fileList = [];
         var memfs=[];
@@ -32,6 +31,33 @@
         var runEmscripten = function () {
             console.log("run baby");
             var arguments = document.getElementById("arguments").value.split(" ");
+
+            var stdout = "";
+            var stderr = "";
+            var worker = new Worker("../gdcmanon.js");
+            worker.onmessage = function(e) {
+                var msg = e.data;
+                switch (msg.type) {
+                    case "ready":
+                        worker.postMessage({type: "run", arguments: arguments, MEMFS:memfs});
+                        break;
+                    case "resolve":
+                        console.log(msg.MEMFS);
+                        break;
+                    case "stdout":
+                        stdout += msg.data + "\n";
+                        break;
+                    case "stderr":
+                        stderr += msg.data + "\n";
+                        break;
+                    case "exit":
+                        console.log("Process exited with code " + msg.data);
+                        console.log(stdout);
+                        worker.terminate();
+                        break;
+                }
+            };
+
             var result = gdcmFunc(memfs,arguments); // run the app
             console.log(result);
         };

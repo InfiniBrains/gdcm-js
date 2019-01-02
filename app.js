@@ -1,193 +1,129 @@
 var requires = {};
 
-exports.gdcmconv = function(memfs, args)
+exports.gdcmconv = function(data)
 {
   if(requires.gdcmconv === undefined)
       requires.gdcmconv = require('./gdcmconv.js');
 
-  return requires.gdcmconv({
-      MEMFS: memfs,
-      arguments: args,
-      stdin: function () {}
-  });
+  return requires.gdcmconv(data);
 };
 
-exports.gdcmanon = function(memfs, args)
+exports.gdcmanon = function(data)
 {
     if(requires.gdcmanon === undefined)
         requires.gdcmanon = require('./gdcmanon.js');
 
-    return requires.gdcmanon({
-        MEMFS: memfs,
-        arguments: args,
-        stdin: function () {}
-    });
+    return requires.gdcmanon(data);
 };
 
-exports.gdcmcheck = function(memfs, args)
+exports.gdcmcheck = function(data)
 {
     if(requires.gdcmcheck === undefined)
         requires.gdcmcheck = require('./gdcmcheck.js');
 
-    return requires.gdcmcheck({
-        MEMFS: memfs,
-        arguments: args,
-        stdin: function () {}
-    });
+    return requires.gdcmcheck(data);
 };
 
-exports.gdcmdictdump = function(memfs, args)
+exports.gdcmdictdump = function(data)
 {
     if(requires.gdcmdictdump === undefined)
         requires.gdcmdictdump = require('./gdcmdictdump.js');
 
-    return requires.gdcmdictdump({
-        MEMFS: memfs,
-        arguments: args,
-        stdin: function () {}
-    });
+    return requires.gdcmdictdump(data);
 };
 
-exports.gdcmdiff = function(memfs, args)
+exports.gdcmdiff = function(data)
 {
     if(requires.gdcmdiff === undefined)
         requires.gdcmdiff = require('./gdcmdiff.js');
 
-    return requires.gdcmdiff({
-        MEMFS: memfs,
-        arguments: args,
-        stdin: function () {}
-    });
+    return requires.gdcmdiff(data);
 };
 
-exports.gdcmdump = function(memfs, args)
+exports.gdcmdump = function(data)
 {
     if(requires.gdcmdump === undefined)
         requires.gdcmdump = require('./gdcmdump.js');
 
-    return requires.gdcmdump({
-        MEMFS: memfs,
-        arguments: args,
-        stdin: function () {}
-    });
+    return requires.gdcmdump(data);
 };
 
-exports.gdcmgendir = function(memfs, args)
+exports.gdcmgendir = function(data)
 {
     if(requires.gdcmgendir === undefined)
         requires.gdcmgendir = require('./gdcmgendir.js');
 
-    return requires.gdcmgendir({
-        MEMFS: memfs,
-        arguments: args,
-        stdin: function () {}
-    });
+    return requires.gdcmgendir(data);
 };
 
-exports.gdcmimg = function(memfs, args)
+exports.gdcmimg = function(data)
 {
     if(requires.gdcmimg === undefined)
         requires.gdcmimg = require('./gdcmimg.js');
 
-    return requires.gdcmimg({
-        MEMFS: memfs,
-        arguments: args,
-        stdin: function () {}
-    });
+    return requires.gdcmimg(data);
 };
 
-exports.gdcmkey = function(memfs, args)
+exports.gdcmkey = function(data)
 {
     if(requires.gdcmkey === undefined)
         requires.gdcmkey = require('./gdcmkey.js');
 
-    return requires.gdcmkey({
-        MEMFS: memfs,
-        arguments: args,
-        stdin: function () {}
-    });
+    return requires.gdcmkey(data);
 };
 
-exports.gdcmoverlay = function(memfs, args)
+exports.gdcmoverlay = function(data)
 {
     if(requires.gdcmoverlay === undefined)
         requires.gdcmoverlay = require('./gdcmoverlay.js');
 
-    return requires.gdcmoverlay({
-        MEMFS: memfs,
-        arguments: args,
-        stdin: function () {}
-    });
+    return requires.gdcmoverlay(data);
 };
 
-exports.gdcmpap3 = function(memfs, args)
+exports.gdcmpap3 = function(data)
 {
     if(requires.gdcmpap3 === undefined)
         requires.gdcmpap3 = require('./gdcmpap3.js');
 
-    return requires.gdcmpap3({
-        MEMFS: memfs,
-        arguments: args,
-        stdin: function () {}
-    });
+    return requires.gdcmpap3(data);
 };
 
-exports.gdcmraw = function(memfs, args)
+exports.gdcmraw = function(data)
 {
     if(requires.gdcmraw === undefined)
         requires.gdcmraw = require('./gdcmraw.js');
 
-    return requires.gdcmraw({
-        MEMFS: memfs,
-        arguments: args,
-        stdin: function () {}
-    });
+    return requires.gdcmraw(data);
 };
 
-exports.gdcmscanner = function(memfs, args)
+exports.gdcmscanner = function(data)
 {
     if(requires.gdcmscanner === undefined)
         requires.gdcmscanner = require('./gdcmscanner.js');
 
-    return requires.gdcmscanner({
-        MEMFS: memfs,
-        arguments: args,
-        stdin: function () {}
-    });
+    return requires.gdcmscanner(data);
 };
 
-exports.gdcmtar = function(memfs, args)
+exports.gdcmtar = function(data)
 {
     if(requires.gdcmtar === undefined)
         requires.gdcmtar = require('./gdcmtar.js');
 
-    return requires.gdcmtar({
-        MEMFS: memfs,
-        arguments: args,
-        stdin: function () {}
-    });
+    return requires.gdcmtar(data);
 };
 
-exports.gdcmxml = function(memfs, args)
+exports.gdcmxml = function(data)
 {
     if(requires.gdcmxml === undefined)
         requires.gdcmxml = require('./gdcmxml.js');
 
-    return requires.gdcmxml({
-        MEMFS: memfs,
-        arguments: args,
-        stdin: function () {}
-    });
+    return requires.gdcmxml(data);
 };
 
-exports.pdf2dcm = function(memfs, args)
+exports.pdf2dcm = function(data)
 {
     if(requires.pdf2dcm === undefined)
         requires.pdf2dcm = require('./pdf2dcm.js');
 
-    return requires.pdf2dcm({
-        MEMFS: memfs,
-        arguments: args,
-        stdin: function () {}
-    });
+    return requires.pdf2dcm(data);
 };

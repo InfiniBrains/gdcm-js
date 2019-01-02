@@ -32,12 +32,10 @@ var memfs = [{name: "input.dcm", data: dicomoriginal}]
 // write down the params you have to write into terminal
 var args = ["-i", "input.dcm", "-o", "output.dcm", "-w"]
 // run the app
-var result = gdcm.gdcmconv(memfs,args);
+var result = gdcm.gdcmconv({MEMFS:memfs,arguments:args});
 // get results from result
 // output files will be stored into MEMFS variable
 console.log("input size: " + dicomoriginal.length + ", output size: " + result.MEMFS[0].data.length);
-console.log("stdout: " + result.stdout);
-console.log("stderr: " + result.stderr);
 ```
 
 ## Using directly from browser
@@ -54,7 +52,7 @@ And use it:
 var dicomoriginal = new Uint8Array(????); // you must provide this
 var memfs = [{name: "input.dcm", data: dicomoriginal}]; 
 var args = ["-i", "input.dcm", "-o", "output.dcm", "-w"];
-var result =  gdcmFunc(memfs,args); // run the app
+var result =  gdcmFunc({MEMFS:memfs,arguments:args}); // run the app
 console.log(result.MEMFS[0].data); // print the file output contents
 ```
 

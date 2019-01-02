@@ -1,3 +1,9 @@
+var utf8ToStr;
+
+var ENVIRONMENT_IS_WEB = typeof window === 'object';
+var ENVIRONMENT_IS_WORKER = typeof importScripts === 'function';
+var ENVIRONMENT_IS_NODE = typeof process === 'object' && typeof require === 'function' && !ENVIRONMENT_IS_WEB && !ENVIRONMENT_IS_WORKER;
+var ENVIRONMENT_IS_SHELL = !ENVIRONMENT_IS_WEB && !ENVIRONMENT_IS_NODE && !ENVIRONMENT_IS_WORKER;
 
 function convertToUint8Array(data) {
     if (Array.isArray(data) || data instanceof ArrayBuffer) {
@@ -13,11 +19,10 @@ function convertToUint8Array(data) {
 }
 
 function gdcmFunc(params) {
+    utf8ToStr = UTF8ArrayToString;
     params = params || {};
     var returndata = {};
     var Module = {};
-    var stdout = [];
-    var stderr = [];
 
     Object.keys(params).forEach(function (key) {
         if (key != "mounts" && key != "MEMFS") {
@@ -107,18 +112,8 @@ function gdcmFunc(params) {
             return {"name": file.name, "data": data};
         });
         returndata = {
-            "MEMFS": outFiles,
-            "stdout": stdout,
-            "stderr": stderr
+            "MEMFS": outFiles
         };
     };
 
-    Module.print = function (text) {
-        console.log(text);
-        stdout.push(text);
-    };
 
-    Module.printErr = function (text) {
-        console.log(text);
-        stderr.push(text);
-    };
