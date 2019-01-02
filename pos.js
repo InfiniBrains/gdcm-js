@@ -1,13 +1,12 @@
   if(ENVIRONMENT_IS_WORKER) {
       var response = {
           type: 'resolve', // Can reject the promise in the main thread if desired
-          data: returndata;
+          data: returndata
       };
       self.postMessage(response);
   }
 
   return returndata;
-
 }
 
 if(ENVIRONMENT_IS_NODE)
