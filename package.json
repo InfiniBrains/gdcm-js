@@ -1,6 +1,6 @@
 {
   "name": "gdcm-js",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "GDCM from Malaterre ported to js",
   "main": "app.js",
   "scripts": {
@@ -16,7 +16,8 @@
     "dicom",
     "conv",
     "gdcmconv",
-    "emscripten"
+    "emscripten",
+    "asm.js"
   ],
   "author": "Alexandre Tolstenko",
   "license": "MIT",
