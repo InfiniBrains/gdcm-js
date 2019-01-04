@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+cd ..
 
 echo  "Checking toolset"
 sleep 1

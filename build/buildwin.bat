@@ -1,3 +1,5 @@
+cd ..
+
 md downloads
 cscript /nologo wget.js https://s3.amazonaws.com/mozilla-games/emscripten/releases/emsdk-portable-64bit.zip downloads/emsdk.zip
 cscript /nologo wget.js http://stahlworks.com/dev/unzip.exe downloads/unzip.exe
