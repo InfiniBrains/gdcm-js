@@ -75,3 +75,9 @@ npm run serve:prod
 ```
 
 After access [http://localhost:8082/](http://localhost:8082/)
+
+
+## Authors
+
+* Alexandre Tolstenko
+* Cândido Sales
