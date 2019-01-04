@@ -1,0 +1,94 @@
+<html>
+  <head>
+      <script src="./dist/gdcmconv.js"></script>
+  </head>
+  <body>
+    <input type="file" id="files" name="files[]" multiple />
+    <output id="list"></output>
+    <script>
+      if (
+        !window.File &&
+        !window.FileReader &&
+        !window.FileList &&
+        !window.Blob
+      ) {
+        alert("The File APIs are not fully supported in this browser.");
+      }
+
+      function handleFileSelect(evt) {
+        var files = evt.target.files; // FileList object
+        showFiles(files);
+
+        var reader = new FileReader();
+        
+        // Closure to capture the file information.
+        reader.onload = (function(theFile) {
+          return function(e) {
+            var dicomoriginal = convertToUint8Array(e.target.result);
+            var memfs = [
+              {
+                name: "input.dcm",
+                data: dicomoriginal
+              }
+            ];
+
+            console.log("memfs", memfs);
+
+            var result = gdcmFunc({
+              MEMFS: memfs,
+              arguments: ["-i", "input.dcm", "-o", "output.dcm", "-w"]
+            });
+
+            console.log("result.MEMFS", result);
+
+            console.log(
+              "input size: " +
+                dicomoriginal.length +
+                ", output size: " +
+                result.MEMFS[0].data.length
+            );
+          };
+        })(files[0]);
+
+        // Read in the image file as a data URL.
+        reader.readAsArrayBuffer(files[0]);
+      }
+
+      function showFiles(files) {
+        var output = [];
+        for (var i = 0, f; (f = files[i]); i++) {
+          output.push(
+            "<li><strong>",
+            escape(f.name),
+            "</strong> (",
+            f.type || "n/a",
+            ") - ",
+            f.size,
+            " bytes, last modified: ",
+            f.lastModifiedDate.toLocaleDateString(),
+            "</li>"
+          );
+        }
+        document.getElementById("list").innerHTML =
+          "<ul>" + output.join("") + "</ul>";
+      }
+
+      function convertToUint8Array(data) {
+        if (Array.isArray(data) || data instanceof ArrayBuffer) {
+          data = new Uint8Array(data);
+        } else if (!data) {
+          // `null` for empty files.
+          data = new Uint8Array(0);
+        } else if (!(data instanceof Uint8Array)) {
+          // Avoid unnecessary copying.
+          data = new Uint8Array(data.buffer);
+        }
+        return data;
+      }
+
+      document
+        .getElementById("files")
+        .addEventListener("change", handleFileSelect, false);
+    </script>
+  </body>
+</html>
