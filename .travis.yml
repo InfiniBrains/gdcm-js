@@ -6,16 +6,23 @@ matrix:
       apt:
         sources:
         - ubuntu-toolchain-r-test
+        -  llvm-toolchain-trusty-5.0
+        - george-edison55-precise-backports
         packages:
+        - clang-5.0
+        - gcc-6
+        - g++-6
         - wget
         - make
         - git
         - cmake
         - nodejs
         - npm
-    env:
-    - MATRIX_EVAL="CC=clang && CXX=clang++"
-    - BUILD_TYPE=native
+        - cmake
+        - cmake-data
+    #    env:
+#    - MATRIX_EVAL="CC=clang && CXX=clang++"
+#    - BUILD_TYPE=native
     group: travis_latest
     dist: trusty
     language: node_js
