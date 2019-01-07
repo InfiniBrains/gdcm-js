@@ -30,7 +30,7 @@ matrix:
     - "8"
 
 before_script:
-- apt install cmake
+#- apt install cmake
 - cmake --version
 - TRAVIS_TAG=`date +%Y-%m-%d`
 - uname -a
