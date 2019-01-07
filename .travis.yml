@@ -6,7 +6,7 @@ matrix:
       apt:
         sources:
         - ubuntu-toolchain-r-test
-        -  llvm-toolchain-trusty-5.0
+        - llvm-toolchain-xenial-5.0
         - george-edison55-precise-backports
         packages:
         - clang-5.0
@@ -15,7 +15,6 @@ matrix:
         - wget
         - make
         - git
-        - cmake
         - nodejs
         - npm
         - cmake
@@ -24,13 +23,15 @@ matrix:
 #    - MATRIX_EVAL="CC=clang && CXX=clang++"
 #    - BUILD_TYPE=native
     group: travis_latest
-    dist: trusty
+    dist: xenial
     language: node_js
     node_js:
     - "iojs"
     - "8"
 
 before_script:
+- apt install cmake
+- cmake --version
 - TRAVIS_TAG=`date +%Y-%m-%d`
 - uname -a
 
