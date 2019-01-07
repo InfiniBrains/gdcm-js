@@ -4,7 +4,8 @@
   "description": "GDCM from Malaterre ported to js",
   "main": "app.js",
   "scripts": {
-    "test": "node tester.js"
+    "test": "node tester.js",
+    "serve:prod": "http-server ./ -p 8082"
   },
   "repository": {
     "type": "git",

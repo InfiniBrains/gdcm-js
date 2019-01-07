@@ -4,3 +4,4 @@ downloads
 node_modules/
 downloads/
 gdcm.js*
+dist/
