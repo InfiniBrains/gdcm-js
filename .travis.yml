@@ -28,6 +28,8 @@ matrix:
     node_js:
     - "iojs"
     - "8"
+    services:
+    - docker
 
 before_script:
 #- apt install cmake

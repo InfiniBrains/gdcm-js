@@ -76,14 +76,6 @@ mkdir -p gdcm
 mv -f GDCM-2.8.8/* gdcm
 rm -rf GDCM-2.8.8
 
-#cd downloads
-#md emsdk
-#unzip.exe cmake.zip
-#ren cmake-3.10.1-win64-x64 cmake
-#unzip.exe gdcm.zip
-#ren GDCM-2.8.3 gdcm
-#unzip.exe emsdk.zip -d emsdk
-
 echo  "Setting up emscripten"
 sleep 1
 

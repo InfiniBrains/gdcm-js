@@ -50,7 +50,16 @@ ${TAR} -xvzf gdcm.tar.gz
 mkdir -p gdcm
 mv -f GDCM-2.8.8/* gdcm
 rm -rf GDCM-2.8.8
+cd gdcm
 
-docker run --rm -v $(pwd):/src trzeci/emscripten emcc helloworld.cpp -o helloworld.js
+docker run --rm -v $(pwd):/src trzeci/emscripten emcmake cmake -DGDCM_BUILD_DOCBOOK_MANPAGES=0 -DGDCM_BUILD_APPLICATIONS=1 -DGDCM_BUILD_EXAMPLES=1 -DEMSCRIPTEN=1 -DEMSCRIPTEN_GENERATE_BITCODE_STATIC_LIBRARIES=1 -H. -Bbuild
+docker run --rm -v $(pwd):/src trzeci/emscripten emcmake cmake -DGDCM_BUILD_DOCBOOK_MANPAGES=0 -DGDCM_BUILD_APPLICATIONS=1 -DGDCM_BUILD_EXAMPLES=1 -DEMSCRIPTEN=1 -DEMSCRIPTEN_GENERATE_BITCODE_STATIC_LIBRARIES=1 -H. -Bbuild
+docker run --rm -v $(pwd):/src trzeci/emscripten emmake make -j9 -C build
 
-trzeci/emscripten
+cd ..
+cd ..
+
+rm -rf dist
+mkdir dist
+
+docker run --rm -v $(pwd):/src trzeci/emscripten build/runInsideDocker.sh
