@@ -24,7 +24,7 @@ You can use it in same way you you use in the terminal. Please read how to use t
 ## Example via node
 ```
 var fs = require("fs");
-var gdcm = require("gdcm");
+var gdcm = require("gdcm-js");
 // read dicom bytes
 var dicomoriginal = new Uint8Array(fs.readFileSync('data/deflated.dcm')); 
 // create a memfs with the file
@@ -44,14 +44,14 @@ You can load directly the desired application instead of the app from npm versio
 
 For this instance my appname is `gdcmconv`. 
 ```
-<script src="gdcmconv.js"></script>
+<script src="https://raw.githubusercontent.com/InfiniBrains/gdcm-js/master/gdcmconv.js"></script>
 ```
 
 And use it:
 ```
 var dicomoriginal = new Uint8Array(????); // you must provide this
 var memfs = [{name: "input.dcm", data: dicomoriginal}]; 
-var args = ["-i", "input.dcm", "-o", "output.dcm", "-w"];
+var args = ["-i", "input.dcm", "-o", "output.dcm", "-w"]; // the very same arguments you should pass via terminal
 var result =  gdcmFunc({MEMFS:memfs,arguments:args}); // run the app
 console.log(result.MEMFS[0].data); // print the file output contents
 ```
