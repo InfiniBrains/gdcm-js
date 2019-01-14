@@ -56,6 +56,10 @@ var result =  gdcmFunc({MEMFS:memfs,arguments:args}); // run the app
 console.log(result.MEMFS[0].data); // print the file output contents
 ```
 
+### Running Example
+
+- https://infinibrains.github.io/gdcm-js/ 
+
 ## ToDo:
 
 If you are planning to use more than one application, all of them will have the functioname `gdcmFunc` so be careful when importing many apps via browser. Via node this must be fine.
