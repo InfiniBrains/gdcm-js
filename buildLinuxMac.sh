@@ -65,7 +65,7 @@ sleep 1
 mkdir -p downloads
 cd downloads
 ${GIT} clone https://github.com/emscripten-core/emsdk.git
-${WGET} -c -nc https://github.com/malaterre/GDCM/archive/v2.8.9.tar.gz -O gdcm.tar.gz
+${WGET} -c -nc https://github.com/malaterre/GDCM/archive/v2.8.8.tar.gz -O gdcm.tar.gz
 
 echo  "Decompressing GDCM"
 sleep 1
@@ -88,8 +88,10 @@ sleep 1
 
 cd emsdk
 ./emsdk update
-./emsdk install latest
-./emsdk activate latest
+./emsdk install 1.38.33
+./emsdk activate 1.38.33
+
+echo  "sourcing emsdk"
 
 source ./emsdk_env.sh
 #./emsdk install mingw-7.1.0-64bit
@@ -102,8 +104,8 @@ cd ..
 cd gdcm
 mkdir build
 cd build
-emcmake cmake -DCMAKE_TOOLCHAIN_FILE=${EMSDK}/upstream/emscripten/cmake/Modules/Platform/Emscripten.cmake -DGDCM_BUILD_DOCBOOK_MANPAGES=0 -DGDCM_BUILD_APPLICATIONS=1 -DGDCM_BUILD_EXAMPLES=1 -DEMSCRIPTEN=1 ..
-emcmake cmake -DCMAKE_TOOLCHAIN_FILE=${EMSDK}/upstream/emscripten/cmake/Modules/Platform/Emscripten.cmake -DGDCM_BUILD_DOCBOOK_MANPAGES=0 -DGDCM_BUILD_APPLICATIONS=1 -DGDCM_BUILD_EXAMPLES=1 -DEMSCRIPTEN=1 ..
+emcmake cmake -DCMAKE_TOOLCHAIN_FILE=${EMSDK}/fastcomp/emscripten/cmake/Modules/Platform/Emscripten.cmake -DGDCM_BUILD_DOCBOOK_MANPAGES=0 -DGDCM_BUILD_APPLICATIONS=1 -DGDCM_BUILD_EXAMPLES=1 -DEMSCRIPTEN=1 -DEMSCRIPTEN_GENERATE_BITCODE_STATIC_LIBRARIES=1 ..
+emcmake cmake -DCMAKE_TOOLCHAIN_FILE=${EMSDK}/fastcomp/emscripten/cmake/Modules/Platform/Emscripten.cmake -DGDCM_BUILD_DOCBOOK_MANPAGES=0 -DGDCM_BUILD_APPLICATIONS=1 -DGDCM_BUILD_EXAMPLES=1 -DEMSCRIPTEN=1 -DEMSCRIPTEN_GENERATE_BITCODE_STATIC_LIBRARIES=1 ..
 ${MAKE} -j 20
 cd ..
 cd ..
@@ -112,5 +114,5 @@ for i in downloads/gdcm/Applications/Cxx/*.cxx; do
   NEWNAME=${i##*/} ;
   NEWNAME=${NEWNAME%%.*}.js ;
   echo "${i}" ;
-  em++ "${i}" -o "${NEWNAME}" -s WASM=0 -s MODULARIZE=0 -s EXIT_RUNTIME=0 --memory-init-file 0 -Oz -s FORCE_FILESYSTEM=1 -s NODEJS_CATCH_EXIT=0 -s DISABLE_EXCEPTION_CATCHING=0 --closure 0 --post-js ./pos.js --pre-js ./pre.js -Idownloads/gdcm/build/Utilities/gdcmzlib -Idownloads/gdcm/Utilities -Idownloads/gdcm/Utilities/gdcmzlib -Idownloads/gdcm/Source/InformationObjectDefinition -Idownloads/gdcm/build/bin -Idownloads/gdcm/build/Source/Common -Idownloads/gdcm/build/Source/Common -Idownloads/gdcm/build/Source/DataStructureAndEncodingDefinition -Idownloads/gdcm/build/Source/MediaStorageAndFileFormat -Idownloads/gdcm/build/Source/InformationObjectDefinition -Idownloads/gdcm/build/Source/MessageExchangeDefinition -Idownloads/gdcm/build/Source/DataDictionary -Idownloads/gdcm/build/Utilities -Idownloads/gdcm/build/Utilities/socketxx -Idownloads/gdcm/build/Utilities/socketxx/socket++ -Idownloads/gdcm/build/Utilities/socketxx/socket++ -Idownloads/gdcm/build/Utilities/gdcmopenjpeg -Idownloads/gdcm/Source/DataStructureAndEncodingDefinition -Idownloads/gdcm/Source/Common -Idownloads/gdcm/Source/MediaStorageAndFileFormat -Idownloads/gdcm/Source/DataDictionary downloads/gdcm/build/bin/libgdcmCommon.a downloads/gdcm/build/bin/libgdcmIOD.a downloads/gdcm/build/bin/libgdcmcharls.a downloads/gdcm/build/bin/libgdcmjpeg16.a downloads/gdcm/build/bin/libgdcmuuid.a downloads/gdcm/build/bin/libgdcmDICT.a downloads/gdcm/build/bin/libgdcmMEXD.a downloads/gdcm/build/bin/libgdcmexpat.a downloads/gdcm/build/bin/libgdcmjpeg8.a downloads/gdcm/build/bin/libgdcmzlib.a downloads/gdcm/build/bin/libgdcmDSED.a downloads/gdcm/build/bin/libgdcmMSFF.a downloads/gdcm/build/bin/libgdcmjpeg12.a downloads/gdcm/build/bin/libgdcmopenjp2.a downloads/gdcm/build/bin/libsocketxx.a ;
+  em++ "${i}" -o "${NEWNAME}" -s WASM=0 -s MODULARIZE=0 -s EXIT_RUNTIME=0 --memory-init-file 0 -Oz -s FORCE_FILESYSTEM=1 -s NODEJS_CATCH_EXIT=0 -s DISABLE_EXCEPTION_CATCHING=0 --closure 0 --post-js ./pos.js --pre-js ./pre.js -Idownloads/gdcm/build/Utilities/gdcmzlib -Idownloads/gdcm/Utilities -Idownloads/gdcm/Utilities/gdcmzlib -Idownloads/gdcm/Source/InformationObjectDefinition -Idownloads/gdcm/build/bin -Idownloads/gdcm/build/Source/Common -Idownloads/gdcm/build/Source/Common -Idownloads/gdcm/build/Source/DataStructureAndEncodingDefinition -Idownloads/gdcm/build/Source/MediaStorageAndFileFormat -Idownloads/gdcm/build/Source/InformationObjectDefinition -Idownloads/gdcm/build/Source/MessageExchangeDefinition -Idownloads/gdcm/build/Source/DataDictionary -Idownloads/gdcm/build/Utilities -Idownloads/gdcm/build/Utilities/socketxx -Idownloads/gdcm/build/Utilities/socketxx/socket++ -Idownloads/gdcm/build/Utilities/socketxx/socket++ -Idownloads/gdcm/build/Utilities/gdcmopenjpeg -Idownloads/gdcm/Source/DataStructureAndEncodingDefinition -Idownloads/gdcm/Source/Common -Idownloads/gdcm/Source/MediaStorageAndFileFormat -Idownloads/gdcm/Source/DataDictionary downloads/gdcm/build/bin/libgdcmCommon.bc downloads/gdcm/build/bin/libgdcmIOD.bc downloads/gdcm/build/bin/libgdcmcharls.bc downloads/gdcm/build/bin/libgdcmjpeg16.bc downloads/gdcm/build/bin/libgdcmuuid.bc downloads/gdcm/build/bin/libgdcmDICT.bc downloads/gdcm/build/bin/libgdcmMEXD.bc downloads/gdcm/build/bin/libgdcmexpat.bc downloads/gdcm/build/bin/libgdcmjpeg8.bc downloads/gdcm/build/bin/libgdcmzlib.bc downloads/gdcm/build/bin/libgdcmDSED.bc downloads/gdcm/build/bin/libgdcmMSFF.bc downloads/gdcm/build/bin/libgdcmjpeg12.bc downloads/gdcm/build/bin/libgdcmopenjp2.bc downloads/gdcm/build/bin/libsocketxx.bc ;
 done ;

@@ -1,10 +1,3 @@
-var utf8ToStr;
-
-var ENVIRONMENT_IS_WEB = typeof window === 'object';
-var ENVIRONMENT_IS_WORKER = typeof importScripts === 'function';
-var ENVIRONMENT_IS_NODE = typeof process === 'object' && typeof require === 'function' && !ENVIRONMENT_IS_WEB && !ENVIRONMENT_IS_WORKER;
-var ENVIRONMENT_IS_SHELL = !ENVIRONMENT_IS_WEB && !ENVIRONMENT_IS_NODE && !ENVIRONMENT_IS_WORKER;
-
 function convertToUint8Array(data) {
     if (Array.isArray(data) || data instanceof ArrayBuffer) {
         data = new Uint8Array(data);
@@ -19,36 +12,63 @@ function convertToUint8Array(data) {
 }
 
 function gdcmFunc(params) {
-    utf8ToStr = UTF8ArrayToString;
+    console.log("func");
+
     params = params || {};
-    var returndata = {};
+    var __abort = abort;
+    var returnData;
     var Module = {};
 
-    Object.keys(params).forEach(function (key) {
-        if (key != "mounts" && key != "MEMFS") {
+    Object.keys(params).forEach(function(key) {
+        if (["mounts", "MEMFS", "onExit", "chdir"].indexOf(key) < 0) {
             Module[key] = params[key];
         }
     });
 
-    // XXX(Kagami): Prevent Emscripten to call `process.exit` at the end of
-    // execution on Node.
-    // There is no longer `NODE_STDOUT_FLUSH_WORKAROUND` and it seems to
-    // be the best way to accomplish that.
-    Module["preInit"] = function () {
-        if (ENVIRONMENT_IS_NODE) {
-            exit = Module["exit"] = function (status) {
-                ABORT = true;
-                EXITSTATUS = status;
-                STACKTOP = initialStackTop;
-                exitRuntime();
-                if (Module["onExit"]) Module["onExit"](status);
-                throw new ExitStatus(status);
-            };
+    // Mute exception on unreachable.
+    abort = function(what) {
+        console.log("abort");
+        if (arguments.length) {
+            __abort(what);
+        } else {
+            throw new ExitStatus(0);
         }
     };
 
-    Module["preRun"] = function () {
-        (params["mounts"] || []).forEach(function (mount) {
+    // Fix CR.
+    function __out(cb) {
+        console.log("out");
+        var buf = [];
+        return function(ch, flush) {
+            if (flush && buf.length) return cb(UTF8ArrayToString(buf, 0));
+            if (ch === 10 || ch === 13) {
+                if (ENVIRONMENT_IS_NODE) buf.push(ch);
+                cb(UTF8ArrayToString(buf, 0));
+                buf = [];
+            } else if (ch !== 0) {
+                buf.push(ch);
+            }
+        };
+    }
+    Module["stdin"] = Module["stdin"] || function() {};
+    Module["stdout"] = Module["stdout"] || __out(function(line) { out(line) });
+    Module["stderr"] = Module["stderr"] || __out(function(line) { err(line) });
+    if (typeof process === "object") {
+        Module["print"] = Module["print"] || process.stdout.write.bind(process.stdout);
+        Module["printErr"] = Module["printErr"] || process.stderr.write.bind(process.stderr);
+    }
+
+    // Disable process.exit in nodejs and don't call onExit twice.
+    Module["quit"] = function(status) {
+        console.log("quit");
+        Module["stdout"](0, true);
+        Module["stderr"](0, true);
+        if (params["onExit"]) params["onExit"](status);
+    };
+
+    Module["preRun"] = function() {
+        console.log("prerun");
+        (params["mounts"] || []).forEach(function(mount) {
             var fs = FS.filesystems[mount["type"]];
             if (!fs) {
                 throw new Error("Bad mount type");
@@ -70,9 +90,9 @@ function gdcmFunc(params) {
         });
 
         FS.mkdir("/work");
-        FS.chdir("/work");
+        FS.chdir(params["chdir"] || "/work");
 
-        (params["MEMFS"] || []).forEach(function (file) {
+        (params["MEMFS"] || []).forEach(function(file) {
             if (file["name"].match(/\//)) {
                 throw new Error("Bad file name");
             }
@@ -83,7 +103,9 @@ function gdcmFunc(params) {
         });
     };
 
-    Module["postRun"] = function () {
+    Module["postRun"] = function() {
+        console.log("postrun");
+
         // NOTE(Kagami): Search for files only in working directory, one
         // level depth. Since FFmpeg shouldn't normally create
         // subdirectories, it should be enough.
@@ -96,24 +118,20 @@ function gdcmFunc(params) {
             if (contents.__proto__ && contents.__proto__.name === "__proto__") {
                 filenames.push("__proto__");
             }
-            return filenames.map(function (filename) {
+            return filenames.map(function(filename) {
                 return contents[filename];
             });
         }
 
         var inFiles = Object.create(null);
-        (params["MEMFS"] || []).forEach(function (file) {
+        (params["MEMFS"] || []).forEach(function(file) {
             inFiles[file.name] = null;
         });
-        var outFiles = listFiles("/work").filter(function (file) {
+        var outFiles = listFiles("/work").filter(function(file) {
             return !(file.name in inFiles);
-        }).map(function (file) {
+        }).map(function(file) {
             var data = convertToUint8Array(file.contents);
             return {"name": file.name, "data": data};
         });
-        returndata = {
-            "MEMFS": outFiles
-        };
+        returnData = {"MEMFS": outFiles};
     };
-
-
