@@ -72,8 +72,8 @@ sleep 1
 
 ${TAR} -xvzf gdcm.tar.gz
 mkdir -p gdcm
-mv -f GDCM-2.8.9/* gdcm
-rm -rf GDCM-2.8.9
+mv -f GDCM-2.8.8/* gdcm
+rm -rf GDCM-2.8.8
 
 #cd downloads
 #md emsdk
