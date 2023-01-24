@@ -4,3 +4,5 @@ downloads
 node_modules/
 downloads/
 gdcm.js*
+
+cmake-build-*/*
