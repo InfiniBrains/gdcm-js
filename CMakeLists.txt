@@ -4,14 +4,12 @@ project(gdcmjs)
 
 include(cmake/get_cpm.cmake)
 
-#set(CMAKE_CXX_STANDARD 11)
-#set(CMAKE_CXX_STANDARD_REQUIRED ON)
-#set(CMAKE_CXX_EXTENSIONS OFF)
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
 
 CPMAddPackage(
         NAME gdcm
-#        VERSION 2.8.9 # todo: upgrade this version
-#        GITHUB_REPOSITORY "malaterre/GDCM"
         URL "https://github.com/malaterre/GDCM/archive/refs/tags/v3.0.20.zip"
         OPTIONS
         "GDCM_BUILD_DOCBOOK_MANPAGES 0"
@@ -301,6 +299,6 @@ endif()
 ####################################################################
 
 
-#add_executable(gdcmconvmod gdcmconvmod.cxx)
+add_library(gdcmconvmodlib gdcmconvmod.cxx)
 
 #target_link_libraries(gdcmconvmod gdcmMSFF)
