@@ -86,30 +86,36 @@
         reader.onload = (function(theFile) {
             return function(e) {
                 var dicomoriginal = convertToUint8Array(e.target.result);
-                var memfs = [
-                    {
-                        name: "input.dcm",
-                        data: dicomoriginal
+
+                createGdcmconv({
+                    print: function(t) { console.log(t); },
+                    printErr: function(t) { console.error(t); },
+                    preRun: [function(mod) {
+                        mod.FS.mkdir('/work');
+                        mod.FS.chdir('/work');
+                        mod.FS.writeFile('input.dcm', dicomoriginal);
+                    }]
+                }).then(function(mod) {
+                    try {
+                        mod.callMain(['-i', 'input.dcm', '-o', 'output.dcm', '-w']);
+                    } catch (e) {
+                        // ignore ExitStatus from callMain
                     }
-                ];
 
-                console.log("memfs", memfs);
+                    var FS = mod.FS;
+                    var outputs = FS.readdir('/work')
+                        .filter(function(n) { return n !== '.' && n !== '..' && n !== 'input.dcm'; })
+                        .map(function(n) { return new Uint8Array(FS.readFile('/work/' + n)); });
 
-                var result = gdcmFunc({
-                    MEMFS: memfs,
-                    arguments: ["-i", "input.dcm", "-o", "output.dcm", "-w"]
+                    console.log(
+                        "input size: " +
+                        dicomoriginal.length +
+                        ", output size: " +
+                        outputs[0].length
+                    );
+
+                    showLinkToDownload(outputs[0]);
                 });
-
-                console.log("result", result);
-
-                console.log(
-                    "input size: " +
-                    dicomoriginal.length +
-                    ", output size: " +
-                    result.MEMFS[0].data.length
-                );
-
-                showLinkToDownload(result.MEMFS[0].data);
             };
         })(files[0]);
 
