@@ -6,3 +6,4 @@ downloads/
 gdcm.js*
 
 cmake-build-*/*
+.omo/
