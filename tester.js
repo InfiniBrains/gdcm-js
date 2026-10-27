@@ -75,7 +75,7 @@ async function main() {
   // (d) corrupt input: must resolve, empty MEMFS or non-empty stderr
   try {
     var corruptBytes = new Uint8Array(fs.readFileSync("data/deflated.dcm"));
-    corruptBytes[0] = 0; corruptBytes[1] = 0; corruptBytes[2] = 0; corruptBytes[3] = 0;
+    corruptBytes[128] = 0; corruptBytes[129] = 0; corruptBytes[130] = 0; corruptBytes[131] = 0; // wipe "DICM" magic (bytes 0-3 are preamble, legal to be anything)
     var corrupt = await gdcm.gdcmconv({
       MEMFS: [{ name: "input.dcm", data: corruptBytes }],
       arguments: ["-i", "input.dcm", "-o", "output.dcm"]

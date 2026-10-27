@@ -19,6 +19,8 @@ var result = await gdcm.gdcmconv({MEMFS: memfs, arguments: args});
 console.log(result.MEMFS[0].data.length);
 ```
 
+The `gdcmdictdump` and `pdf2dcm` exports were removed — upstream GDCM 3.2.11 stubbed these apps and the previous artifacts were placeholder copies.
+
 If you consumed the build artifacts directly (`require('./gdcmconv.js')` or a `<script>` tag), the module no longer exposes a directly callable run function. It now exposes a `createGdcmconv` factory that returns a thenable Module; `await` it once before use.
 
 ## Install
@@ -104,9 +106,9 @@ It generates the JavaScript/WebAssembly version of [malaterre's](https://github.
 
 For each application it creates two files: `appname.js` and `appname.wasm`.
 
-Built apps (17):
+Built apps (15):
 
-gdcmanon gdcmcheck gdcmconv gdcmdictdump gdcmdiff gdcmdump gdcmfile gdcmgendir gdcmimg gdcmkey gdcmoverlay gdcmpap3 gdcmraw gdcmscanner gdcmtar gdcmxml pdf2dcm
+gdcmanon gdcmcheck gdcmconv gdcmdiff gdcmdump gdcmfile gdcmgendir gdcmimg gdcmkey gdcmoverlay gdcmpap3 gdcmraw gdcmscanner gdcmtar gdcmxml
 
 Excluded apps and why:
 
@@ -114,6 +116,8 @@ Excluded apps and why:
 |-----|--------|
 | gdcmscu | uses sockets, not available in WASM |
 | gdcmpdf | depends on poppler |
+| gdcmdictdump | stubbed upstream in GDCM 3.2.11 (no main; 0.0.4 artifact was a placeholder copy) |
+| pdf2dcm | superseded by poppler-gated gdcmpdf; 0.0.4 artifact was a placeholder copy |
 | gdcminfo | puff.c |
 | gdcmclean, gdcmstream, deflate, gdcm | no legacy artifact |
 
