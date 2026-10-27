@@ -10,7 +10,7 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 
 CPMAddPackage(
         NAME gdcm
-        URL "https://github.com/malaterre/GDCM/archive/refs/tags/v3.0.20.zip"
+        URL "https://github.com/malaterre/GDCM/archive/refs/tags/v3.2.11.zip"
         OPTIONS
         "GDCM_BUILD_DOCBOOK_MANPAGES 0"
         "BUILD_APPLICATIONS 1"

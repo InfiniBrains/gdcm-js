@@ -1,129 +1,59 @@
-var requires = {};
+function convertToUint8Array(data) {
+  if (Array.isArray(data) || data instanceof ArrayBuffer) return new Uint8Array(data);
+  if (!data) return new Uint8Array(0);
+  if (!(data instanceof Uint8Array)) return new Uint8Array(data.buffer);
+  return data;
+}
 
-exports.gdcmconv = function(data)
-{
-  if(requires.gdcmconv === undefined)
-      requires.gdcmconv = require('./gdcmconv.js');
+function runApp(appName, params) {
+  params = params || {};
+  var createModule = require('./' + appName + '.js');
+  var stdout = [];
+  var stderr = [];
+  var inputNames = {};
+  (params.MEMFS || []).forEach(function (f) { inputNames[f.name] = true; });
 
-  return requires.gdcmconv(data);
-};
+  var Module = createModule({
+    print: function (t) { stdout.push(t); },
+    printErr: function (t) { stderr.push(t); },
+    onAbort: function (what) { stderr.push('abort: ' + what); },
+    preRun: [function (mod) {
+      var FS = mod.FS;
+      try { FS.mkdir('/work'); } catch (e) { /* already there */ }
+      FS.chdir('/work');
+      (params.MEMFS || []).forEach(function (f) {
+        FS.writeFile(f.name, convertToUint8Array(f.data));
+      });
+    }],
+  });
+  return Module.then(function (mod) {
+    var Module = mod && mod.FS ? mod : Module;
+    try {
+      Module.callMain(params.arguments || []);
+    } catch (e) {
+      if (!(e && e.name === 'ExitStatus')) stderr.push(String(e));
+    }
+    var FS = Module.FS;
+    var outFiles = FS.readdir('/work')
+      .filter(function (n) { return n !== '.' && n !== '..' && !inputNames[n]; })
+      .map(function (n) { return { name: n, data: new Uint8Array(FS.readFile('/work/' + n)) }; });
+    return { MEMFS: outFiles, stdout: stdout, stderr: stderr };
+  });
+}
 
-exports.gdcmanon = function(data)
-{
-    if(requires.gdcmanon === undefined)
-        requires.gdcmanon = require('./gdcmanon.js');
+function makeExport(name) { return function (data) { return runApp(name, data); }; }
 
-    return requires.gdcmanon(data);
-};
-
-exports.gdcmcheck = function(data)
-{
-    if(requires.gdcmcheck === undefined)
-        requires.gdcmcheck = require('./gdcmcheck.js');
-
-    return requires.gdcmcheck(data);
-};
-
-exports.gdcmdictdump = function(data)
-{
-    if(requires.gdcmdictdump === undefined)
-        requires.gdcmdictdump = require('./gdcmdictdump.js');
-
-    return requires.gdcmdictdump(data);
-};
-
-exports.gdcmdiff = function(data)
-{
-    if(requires.gdcmdiff === undefined)
-        requires.gdcmdiff = require('./gdcmdiff.js');
-
-    return requires.gdcmdiff(data);
-};
-
-exports.gdcmdump = function(data)
-{
-    if(requires.gdcmdump === undefined)
-        requires.gdcmdump = require('./gdcmdump.js');
-
-    return requires.gdcmdump(data);
-};
-
-exports.gdcmgendir = function(data)
-{
-    if(requires.gdcmgendir === undefined)
-        requires.gdcmgendir = require('./gdcmgendir.js');
-
-    return requires.gdcmgendir(data);
-};
-
-exports.gdcmimg = function(data)
-{
-    if(requires.gdcmimg === undefined)
-        requires.gdcmimg = require('./gdcmimg.js');
-
-    return requires.gdcmimg(data);
-};
-
-exports.gdcmkey = function(data)
-{
-    if(requires.gdcmkey === undefined)
-        requires.gdcmkey = require('./gdcmkey.js');
-
-    return requires.gdcmkey(data);
-};
-
-exports.gdcmoverlay = function(data)
-{
-    if(requires.gdcmoverlay === undefined)
-        requires.gdcmoverlay = require('./gdcmoverlay.js');
-
-    return requires.gdcmoverlay(data);
-};
-
-exports.gdcmpap3 = function(data)
-{
-    if(requires.gdcmpap3 === undefined)
-        requires.gdcmpap3 = require('./gdcmpap3.js');
-
-    return requires.gdcmpap3(data);
-};
-
-exports.gdcmraw = function(data)
-{
-    if(requires.gdcmraw === undefined)
-        requires.gdcmraw = require('./gdcmraw.js');
-
-    return requires.gdcmraw(data);
-};
-
-exports.gdcmscanner = function(data)
-{
-    if(requires.gdcmscanner === undefined)
-        requires.gdcmscanner = require('./gdcmscanner.js');
-
-    return requires.gdcmscanner(data);
-};
-
-exports.gdcmtar = function(data)
-{
-    if(requires.gdcmtar === undefined)
-        requires.gdcmtar = require('./gdcmtar.js');
-
-    return requires.gdcmtar(data);
-};
-
-exports.gdcmxml = function(data)
-{
-    if(requires.gdcmxml === undefined)
-        requires.gdcmxml = require('./gdcmxml.js');
-
-    return requires.gdcmxml(data);
-};
-
-exports.pdf2dcm = function(data)
-{
-    if(requires.pdf2dcm === undefined)
-        requires.pdf2dcm = require('./pdf2dcm.js');
-
-    return requires.pdf2dcm(data);
-};
+exports.gdcmconv = makeExport('gdcmconv');
+exports.gdcmanon = makeExport('gdcmanon');
+exports.gdcmcheck = makeExport('gdcmcheck');
+exports.gdcmdiff = makeExport('gdcmdiff');
+exports.gdcmdump = makeExport('gdcmdump');
+exports.gdcmgendir = makeExport('gdcmgendir');
+exports.gdcmimg = makeExport('gdcmimg');
+exports.gdcmkey = makeExport('gdcmkey');
+exports.gdcmoverlay = makeExport('gdcmoverlay');
+exports.gdcmpap3 = makeExport('gdcmpap3');
+exports.gdcmraw = makeExport('gdcmraw');
+exports.gdcmscanner = makeExport('gdcmscanner');
+exports.gdcmtar = makeExport('gdcmtar');
+exports.gdcmxml = makeExport('gdcmxml');

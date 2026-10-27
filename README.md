@@ -2,69 +2,149 @@
 [![NPM](https://nodei.co/npm/gdcm-js.png?downloads=true)](https://www.npmjs.com/package/gdcm-js)
 
 
-This is the GDCM Library ported to JavaScript using Emscripten. 
+This is the GDCM Library ported to JavaScript using Emscripten (WebAssembly). 
 It is useful to convert DICOMs between formats inside browser, ionic, hybrid apps, node... 
 I personally created this to convert and decompress some exotic DICOM types.
 
-## Building
-In order to build it, just run the `buildLinuxMac.sh` or `buildwin.bat`. 
-It generates the javascript version of the [malaterre's](https://github.com/malaterre/GDCM) `gdcm` built with `emscripten` then transpiled to JavaScript. 
-For each application it will create two files: `gdcmXXX.js` and `gdcmXXX.mem` where is XXX is the original app name.
+## Breaking changes in 0.1.0
 
-## Using
-I created a npm wrapper that 
-- Receives the dicom files as `Uint8Array` through MEMFS and the array of terminal parameters;
-- Returns the MEMFS with converted files as `Uint8Array`;
-- Stdout and Stderr with console output;
+Calls are now asynchronous and return a Promise. Add `await` (or `.then`) at every call site:
 
-## Using GDCM End User Applications
+```js
+// 0.0.4
+var result = gdcm.gdcmconv({MEMFS: memfs, arguments: args});
+console.log(result.MEMFS[0].data.length);
+// 0.1.0
+var result = await gdcm.gdcmconv({MEMFS: memfs, arguments: args});
+console.log(result.MEMFS[0].data.length);
+```
 
-You can use it in same way you you use in the terminal. Please read how to use them here: [gdcm referece](http://gdcm.sourceforge.net/wiki/index.php/End_User_Applications)
+The `gdcmdictdump` and `pdf2dcm` exports were removed — upstream GDCM 3.2.11 stubbed these apps and the previous artifacts were placeholder copies.
+
+If you consumed the build artifacts directly (`require('./gdcmconv.js')` or a `<script>` tag), the module no longer exposes a directly callable run function. It now exposes a `createGdcmconv` factory that returns a thenable Module; `await` it once before use.
+
+## Install
+
+```sh
+npm install gdcm-js
+```
+
+Node 18 or newer is recommended.
 
 ## Example via node
-```
+
+```js
 var fs = require("fs");
 var gdcm = require("gdcm-js");
-// read dicom bytes
-var dicomoriginal = new Uint8Array(fs.readFileSync('data/deflated.dcm')); 
-// create a memfs with the file
-var memfs = [{name: "input.dcm", data: dicomoriginal}]
-// write down the params you have to write into terminal
-var args = ["-i", "input.dcm", "-o", "output.dcm", "-w"]
-// run the app
-var result = gdcm.gdcmconv({MEMFS:memfs,arguments:args});
-// get results from result
-// output files will be stored into MEMFS variable
-console.log("input size: " + dicomoriginal.length + ", output size: " + result.MEMFS[0].data.length);
+
+async function main() {
+  // read dicom bytes
+  var dicomoriginal = new Uint8Array(fs.readFileSync("data/deflated.dcm"));
+  // create a memfs with the file
+  var memfs = [{name: "input.dcm", data: dicomoriginal}];
+  // write down the params you have to write into terminal
+  var args = ["-i", "input.dcm", "-o", "output.dcm", "-w"];
+  // run the app
+  const {MEMFS, stdout, stderr} = await gdcm.gdcmconv({MEMFS: memfs, arguments: args});
+  // output files will be stored into MEMFS variable
+  console.log("input size: " + dicomoriginal.length + ", output size: " + MEMFS[0].data.length);
+}
+main();
 ```
 
 ## Using directly from browser
 
-You can load directly the desired application instead of the app from npm version. Just download and serve both files "appname.js" and "appname.mem" and use like this: 
+Load the desired application script instead of the npm version. For this instance the app is `gdcmconv`. The `.wasm` file must sit next to the `.js` file, and your server should serve it with the `application/wasm` MIME type (the runtime falls back to a slower path otherwise).
 
-For this instance my appname is `gdcmconv`. 
-```
-<script src="https://raw.githubusercontent.com/InfiniBrains/gdcm-js/master/gdcmconv.js"></script>
+```html
+<script src="gdcmconv.js"></script>
 ```
 
 And use it:
-```
+
+```js
 var dicomoriginal = new Uint8Array(????); // you must provide this
-var memfs = [{name: "input.dcm", data: dicomoriginal}]; 
-var args = ["-i", "input.dcm", "-o", "output.dcm", "-w"]; // the very same arguments you should pass via terminal
-var result =  gdcmFunc({MEMFS:memfs,arguments:args}); // run the app
-console.log(result.MEMFS[0].data); // print the file output contents
+
+createGdcmconv().then(function(gdcmconv) {
+  return gdcmconv({
+    MEMFS: [], // populated in preRun below if you prefer lazy injection
+    arguments: ["-i", "input.dcm", "-o", "output.dcm", "-w"],
+    preRun: function() {
+      gdcmconv.FS.mkdir("/work");
+      gdcmconv.FS.writeFile("/work/input.dcm", dicomoriginal);
+    }
+  });
+}).then(function(result) {
+  // collect outputs written to /work
+  var outputs = result.MEMFS.filter(function(f) { return f.name.indexOf("/work/") === 0; });
+  var blob = new Blob([outputs[0].data]);
+  // download blob as needed
+  console.log("output size:", outputs[0].data.length);
+});
 ```
+
+For each application it will create two files: `appname.js` and `appname.wasm`. Serve both.
 
 ### Running Example
 
 - https://infinibrains.github.io/gdcm-js/ 
 
-## ToDo:
+## Building
 
-If you are planning to use more than one application, all of them will have the functioname `gdcmFunc` so be careful when importing many apps via browser. Via node this must be fine.
+Prerequisites: git, cmake (3.9.2 or newer), curl, make.
+
+```sh
+./buildLinuxMac.sh
+```
+
+It generates the JavaScript/WebAssembly version of [malaterre's](https://github.com/malaterre/GDCM) GDCM built with Emscripten. Pinned versions:
+
+| Component | Version |
+|-----------|---------|
+| emsdk     | 6.0.13  |
+| GDCM      | v3.2.11 |
+
+For each application it creates two files: `appname.js` and `appname.wasm`.
+
+Built apps (15):
+
+gdcmanon gdcmcheck gdcmconv gdcmdiff gdcmdump gdcmfile gdcmgendir gdcmimg gdcmkey gdcmoverlay gdcmpap3 gdcmraw gdcmscanner gdcmtar gdcmxml
+
+Excluded apps and why:
+
+| App | Reason |
+|-----|--------|
+| gdcmscu | uses sockets, not available in WASM |
+| gdcmpdf | depends on poppler |
+| gdcmdictdump | stubbed upstream in GDCM 3.2.11 (no main; 0.0.4 artifact was a placeholder copy) |
+| pdf2dcm | superseded by poppler-gated gdcmpdf; 0.0.4 artifact was a placeholder copy |
+| gdcminfo | puff.c |
+| gdcmclean, gdcmstream, deflate, gdcm | no legacy artifact |
+
+Platform note: macOS arm64 verified; Linux unverified. `buildwin.bat` is legacy/broken; the Windows build is not maintained.
+
+## Using GDCM End User Applications
+
+You can use them in the same way you use them in the terminal. Please read how to use them here: [gdcm reference](http://gdcm.sourceforge.net/wiki/index.php/End_User_Applications)
+
+## API contract
+
+Input:
+
+```js
+{MEMFS: [{name: "input.dcm", data: Uint8Array}], arguments: ["-i", "input.dcm", "-o", "output.dcm"]}
+```
+
+Output: a Promise resolving to
+
+```js
+{MEMFS: [{name: "output.dcm", data: Uint8Array}], stdout: ["..."], stderr: ["..."]}
+```
+
+Failures resolve with an empty MEMFS and a non-empty stderr. Only module initialization failure rejects the Promise.
 
 ## Authors
 
 * Alexandre Tolstenko
 * Cândido Sales
+
