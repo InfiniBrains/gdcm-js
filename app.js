@@ -17,16 +17,17 @@ function runApp(appName, params) {
     print: function (t) { stdout.push(t); },
     printErr: function (t) { stderr.push(t); },
     onAbort: function (what) { stderr.push('abort: ' + what); },
+    preRun: [function (mod) {
+      var FS = mod.FS;
+      try { FS.mkdir('/work'); } catch (e) { /* already there */ }
+      FS.chdir('/work');
+      (params.MEMFS || []).forEach(function (f) {
+        FS.writeFile(f.name, convertToUint8Array(f.data));
+      });
+    }],
   });
-  Module.preRun.push(function () {
-    var FS = Module.FS;
-    try { FS.mkdir('/work'); } catch (e) { /* already there */ }
-    FS.chdir('/work');
-    (params.MEMFS || []).forEach(function (f) {
-      FS.writeFile(f.name, convertToUint8Array(f.data));
-    });
-  });
-  return Module.then(function () {
+  return Module.then(function (mod) {
+    var Module = mod && mod.FS ? mod : Module;
     try {
       Module.callMain(params.arguments || []);
     } catch (e) {
